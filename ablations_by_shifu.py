@@ -19,8 +19,8 @@ cache_folder = 'results'
 
 payment = ['charge1', 'charge2', 'charge3', 'charge6', 'charge7', 'charge10']
 # personal_information = ['sex', 'blood_type', 'age', 'home_district']
-personal_information = ['sex', 'blood_type', 'home_district','age']
-health_state = ['admiss_diag', 'admiss_times', 'dis_diag_no','dis_diag', 'dis_diag_type', 'dis_diag_status', 'admiss_status']
+personal_information = ['sex', 'blood_type', 'home_district']
+health_state = ['admiss_diag', 'dis_diag', 'admiss_times', 'dis_diag_no', 'dis_diag_type', 'dis_diag_status', 'admiss_status']
 # others = ['pay_flag', 'local_flag']
 others = ['local_flag']
 all = [*payment, *personal_information, *health_state, *others]
@@ -46,7 +46,7 @@ def preprocess():
     shifu.to_excel(osp.join(cache_folder, 'shifu_demo_nonull.xlsx'), index=False)
 
     # delete '-'
-    shifu = shifu.loc[:, (shifu == '-').sum()  == 0]
+    shifu = shifu.loc[:, (shifu == '-').sum() == 0]
     shifu.to_excel(osp.join(cache_folder, 'shifu_demo_nogang.xlsx'), index=False)
 
     # standard admiss_date: 2014-03-25 09:34:28:613 -> 2014-03-25 09:34:28
@@ -55,13 +55,10 @@ def preprocess():
     # convert object to datetime class
     shifu['admiss_date'] = pd.to_datetime(shifu['admiss_date'])
     shifu['dis_date'] = pd.to_datetime(shifu['dis_date'])
-    shifu['birth_date'] = pd.to_datetime(shifu['birth_date'])
 
     # generate target DIH column
     DIH_day = (shifu['dis_date'] - shifu['admiss_date']).apply(lambda d: d.days)
     shifu['DIH_day'] = DIH_day
-    age = (shifu['admiss_date']-shifu['birth_date']).apply(lambda d:d.days)
-    shifu['age'] = age
     shifu.to_excel(osp.join(cache_folder, 'shifu_demo_add_target.xlsx'), index=False)
 
     ########################################################
@@ -77,10 +74,10 @@ def preprocess():
 
     return shifu
 
-# one hot
+
 def encode_shifu(shifu):
     tobe_encoded_names = ['dis_diag', 'admiss_diag']
-    tobe_encoded_names = set(tobe_encoded_names) & set(shifu.columns) # ???交集
+    tobe_encoded_names = set(tobe_encoded_names) & set(shifu.columns)
     if tobe_encoded_names != set():
         column_list = np.array(shifu[tobe_encoded_names]).tolist()
         ohe = OneHotEncoder()
@@ -155,8 +152,6 @@ def tiaotiao(shifu):
     print(f'|RMSE: {rmse:10.3f} | rho : {rho:10.3f} | MSE   :{mes:10.3f}|')
     print(f'|MAPE: {mape:10.3f} | Spec: {spec:10.3f} | Sens  :{sens:10.3f}|')
     print(f'|Acc : {acc:10.3f} | R^2 : {r2:10.3f} | abs(R):{r:10.3f}|')
-
-# return?
 
 
 if __name__ == '__main__':
