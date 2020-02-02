@@ -34,7 +34,7 @@ shifu['dis_date'] = pd.to_datetime(shifu['dis_date'])
 # generate target DIH column
 DIH_day = (shifu['dis_date'] - shifu['admiss_date']).apply(lambda d: f'day_{d.days}')
 shifu['DIH_day'] = DIH_day
-shifu.to_excel('results/shifu_demo_add_target.xlsx', index=False)
+shifu.to_excel('../tt_res/simpled_res/shifu_demo_add_target.xlsx', index=False)
 
 ########################################################
 # data standard (**very important**)
