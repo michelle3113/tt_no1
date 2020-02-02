@@ -8,8 +8,8 @@ from sklearn.metrics import confusion_matrix
 from scipy import stats
 from sklearn.metrics import r2_score # R^2
 
-data_root = '../tt_data/zhuang/sampled_data'
-res_root = '../tt_res/sampled_res'
+data_root = '../tt_data/zhuang/all_data'
+res_root = '../tt_res/all_res'
 
 shifu = pd.read_excel(f'{data_root}/儿科路径病人明细_s1.xlsx')
 
