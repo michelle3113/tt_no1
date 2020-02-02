@@ -8,21 +8,21 @@ from sklearn.metrics import confusion_matrix
 from scipy import stats
 from sklearn.metrics import r2_score # R^2
 
-shifu = pd.read_excel('../tt_data/zhuang/simpled_data/儿科路径病人明细_s1.xlsx')
+shifu = pd.read_excel('../tt_data/zhuang/sampled_data/儿科路径病人明细_s1.xlsx')
 
 # remove duplicate column
 unique_col = [col for col in list(shifu.columns) if not '.' in col]
 shifu = shifu[unique_col]
-shifu.to_excel('../tt_res/simpled_res/shifu_demo_unique.xlsx', index=False)
+shifu.to_excel('../tt_res/sampled_res/shifu_demo_unique.xlsx', index=False)
 
 # remove columns that containing null more that 75% ratio
 shifu = shifu.loc[:, shifu.notna().mean() > 0.85]
 # or shifu = shifu.dropna(1,thresh=len(shifu.index)*0.85)
-shifu.to_excel('../tt_res/simpled_res/shifu_demo_nonull.xlsx', index=False)
+shifu.to_excel('../tt_res/sampled_res/shifu_demo_nonull.xlsx', index=False)
 
 # delete '-'
 shifu = shifu.loc[:, (shifu == '-').sum() == 0]
-shifu.to_excel('../tt_res/simpled_res/shifu_demo_nogang.xlsx', index=False)
+shifu.to_excel('../tt_res/sampled_res/shifu_demo_nogang.xlsx', index=False)
 
 # standard admiss_date: 2014-03-25 09:34:28:613 -> 2014-03-25 09:34:28
 shifu['admiss_date'] = shifu['admiss_date'].apply(lambda s: s[:s.rfind(':')])
@@ -34,7 +34,7 @@ shifu['dis_date'] = pd.to_datetime(shifu['dis_date'])
 # generate target DIH column
 DIH_day = (shifu['dis_date'] - shifu['admiss_date']).apply(lambda d: f'day_{d.days}')
 shifu['DIH_day'] = DIH_day
-shifu.to_excel('../tt_res/simpled_res/shifu_demo_add_target.xlsx', index=False)
+shifu.to_excel('../tt_res/sampled_res/shifu_demo_add_target.xlsx', index=False)
 
 ########################################################
 # data standard (**very important**)
