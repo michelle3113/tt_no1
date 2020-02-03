@@ -28,8 +28,8 @@ shifu = shifu.loc[:, (shifu == '-').sum() == 0]
 shifu.to_excel(f'{res_root}/shifu_demo_nogang.xlsx', index=False)
 
 # standard admiss_date: 2014-03-25 09:34:28:613 -> 2014-03-25 09:34:28
-shifu['admiss_date'] = shifu['admiss_date'].apply(lambda s: s[:s.rfind(':')])
-
+shifu['admiss_date'] = shifu['admiss_date'].apply(lambda s: s if s.count(':')==2 else s[:s.rfind(':')])
+shifu['dis_date'] = shifu['dis_date'].apply(lambda s: s if s.count(':')==2 else s[:s.rfind(':')])
 # convert object to datetime class
 shifu['admiss_date'] = pd.to_datetime(shifu['admiss_date'])
 shifu['dis_date'] = pd.to_datetime(shifu['dis_date'])
