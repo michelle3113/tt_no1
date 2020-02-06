@@ -1,4 +1,4 @@
-import os.path as osp
+# import os.path as osp
 import warnings
 
 import numpy as np
@@ -40,16 +40,16 @@ def preprocess():
     # remove duplicate column
     unique_col = [col for col in list(shifu.columns) if not '.' in col]
     shifu = shifu[unique_col]
-    shifu.to_excel(osp.join(cache_folder, 'shifu_demo_unique.xlsx'), index=False)
+    shifu.to_excel(f'{data_root}/shifu_demo_unique.xlsx', index=False)
 
     # remove columns that containing null more that 85% ratio
     shifu = shifu.loc[:, shifu.notna().mean() > 0.85]
     # or shifu = shifu.dropnqa(1,thresh=len(shifu.index)*0.85)
-    shifu.to_excel(osp.join(cache_folder, 'shifu_demo_nonull.xlsx'), index=False)
+    shifu.to_excel(f'{data_root}/shifu_demo_nonull.xlsx', index=False)
 
     # delete '-'
     shifu = shifu.loc[:, (shifu == '-').sum() == 0]
-    shifu.to_excel(osp.join(cache_folder, 'shifu_demo_nogang.xlsx'), index=False)
+    shifu.to_excel(f'{data_root}/shifu_demo_nogang.xlsx', index=False)
 
     # standard admiss_date: 2014-03-25 09:34:28:613 -> 2014-03-25 09:34:28
     shifu['admiss_date'] = shifu['admiss_date'].apply(lambda s: s if s.count(':') == 2 else s[:s.rfind(':')])
@@ -61,7 +61,7 @@ def preprocess():
     # generate target DIH column
     DIH_day = (shifu['dis_date'] - shifu['admiss_date']).apply(lambda d: d.days)
     shifu['DIH_day'] = DIH_day
-    shifu.to_excel(osp.join(cache_folder, 'shifu_demo_add_target.xlsx'), index=False)
+    shifu.to_excel(f'{data_root}/shifu_demo_add_target.xlsx', index=False)
 
     ########################################################
     # data standard (**very important**)
@@ -88,7 +88,7 @@ def encode_shifu(shifu):
         shifu = pd.concat([shifu, pd.DataFrame(results)], axis=1)
         shifu = shifu.drop(tobe_encoded_names, axis=1)
 
-    shifu.to_excel(osp.join(cache_folder, 'shifu_demo_one_hot.xlsx'), index=False)
+    shifu.to_excel(f'{data_root}/shifu_demo_one_hot.xlsx', index=False)
     return shifu
 
 
