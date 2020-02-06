@@ -35,7 +35,7 @@ all.append('DIH_day')
 
 
 def preprocess():
-    shifu = pd.read_excel(osp.join(data_dir, '儿科路径病人明细_s1.xlsx'), index=False)
+    shifu = pd.read_excel(f'{data_root}/儿科路径病人明细_s.xlsx', index=False)
 
     # remove duplicate column
     unique_col = [col for col in list(shifu.columns) if not '.' in col]
