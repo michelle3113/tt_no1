@@ -14,8 +14,11 @@ from sklearn.utils import shuffle
 
 warnings.filterwarnings('ignore')
 
-data_dir = 'input/儿科路径病人明细_s1.xlsx'
-cache_folder = 'results'
+data_root = '../tt_data/zhuang/all_data'
+res_root = '../tt_res/all_res'
+
+data_dir = f'{data_root}'
+cache_folder = f'{res_root}'
 
 payment = ['charge1', 'charge2', 'charge3', 'charge6', 'charge7', 'charge10']
 # personal_information = ['sex', 'blood_type', 'age', 'home_district']
@@ -24,7 +27,6 @@ health_state = ['admiss_diag', 'dis_diag', 'admiss_times', 'dis_diag_no', 'dis_d
 # others = ['pay_flag', 'local_flag']
 others = ['local_flag']
 all = [*payment, *personal_information, *health_state, *others]
-
 payment.append('DIH_day')
 personal_information.append('DIH_day')
 health_state.append('DIH_day')
@@ -33,7 +35,7 @@ all.append('DIH_day')
 
 
 def preprocess():
-    shifu = pd.read_excel(data_dir)
+    shifu = pd.read_excel(osp.join(data_dir, '儿科路径病人明细_s1.xlsx'), index=False)
 
     # remove duplicate column
     unique_col = [col for col in list(shifu.columns) if not '.' in col]
@@ -50,8 +52,8 @@ def preprocess():
     shifu.to_excel(osp.join(cache_folder, 'shifu_demo_nogang.xlsx'), index=False)
 
     # standard admiss_date: 2014-03-25 09:34:28:613 -> 2014-03-25 09:34:28
-    shifu['admiss_date'] = shifu['admiss_date'].apply(lambda s: s[:s.rfind(':')])
-
+    shifu['admiss_date'] = shifu['admiss_date'].apply(lambda s: s if s.count(':') == 2 else s[:s.rfind(':')])
+    shifu['dis_date'] = shifu['dis_date'].apply(lambda s: s if s.count(':') == 2 else s[:s.rfind(':')])
     # convert object to datetime class
     shifu['admiss_date'] = pd.to_datetime(shifu['admiss_date'])
     shifu['dis_date'] = pd.to_datetime(shifu['dis_date'])
