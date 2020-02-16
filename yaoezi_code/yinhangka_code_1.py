@@ -12,6 +12,7 @@ def cvt_by_mat_dot(code, key_mat):
     idx = 0
     while idx + 3 < len(code):
         tmp_mat = np.mat(code[idx: idx + 3]).reshape(1, 3)
+        print(key_mat ** -1)
         tar_mat = tmp_mat * (key_mat ** -1)
         res.extend(tar_mat.reshape(-1).tolist()[0])
         idx += 3
