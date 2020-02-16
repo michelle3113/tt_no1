@@ -27,5 +27,6 @@ if __name__ == '__main__':
         [1, 1, 0],
     ])
     code = revise_parse(code)
+    print(code)
     code = cvt_by_mat_dot(code, key_mat)
     print(code)
