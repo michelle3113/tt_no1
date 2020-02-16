@@ -8,13 +8,12 @@ from scipy.stats import pearsonr
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import mean_squared_error  # MSE
-from sklearn.metrics import r2_score# R^2
+from sklearn.metrics import r2_score  # R^2
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import recall_score
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.preprocessing import Imputer
+# from sklearn.preprocessing import Imputer
 from sklearn.utils import shuffle
-
 
 warnings.filterwarnings('ignore')
 
@@ -27,7 +26,8 @@ cache_folder = f'{res_root}'
 payment = ['charge1', 'charge2', 'charge3', 'charge6', 'charge7', 'charge10']
 # personal_information = ['sex', 'blood_type', 'age', 'home_district']
 personal_information = ['sex', 'blood_type', 'home_district']
-health_state = ['admiss_diag', 'dis_diag', 'admiss_times', 'dis_diag_no', 'dis_diag_type', 'dis_diag_status', 'admiss_status']
+health_state = ['admiss_diag', 'dis_diag', 'admiss_times', 'dis_diag_no', 'dis_diag_type', 'dis_diag_status',
+                'admiss_status']
 # others = ['pay_flag', 'local_flag']
 others = ['local_flag']
 all = [*payment, *personal_information, *health_state, *others]
@@ -40,6 +40,7 @@ all.append('DIH_day')
 
 def preprocess():
     shifu = pd.read_excel(f'{data_root}/儿科路径病人明细_s.xlsx', index=False)
+    shifu = shifu.iloc[:20]
 
     # remove duplicate column
     unique_col = [col for col in list(shifu.columns) if not '.' in col]
@@ -98,8 +99,8 @@ def encode_shifu(shifu):
 
 def tiaotiao(shifu):
     shifu = encode_shifu(shifu)
-    # compute train num from train ratio
-    train_ratio = 0.70
+    # compute train num from train ratio from abstract
+    train_ratio = 0.50
     train_num = int(len(shifu) * train_ratio)
     print(f'Sample num: {len(shifu)}, Train num: {train_num}, Test num: {len(shifu) - train_num}')
     # initialize target and generate all category name set
@@ -135,18 +136,17 @@ def tiaotiao(shifu):
 
     mape = mean_absolute_percentage_error(test_target, test_prediction)
 
-
     # metric for Spec
-    #TN, FP, FN, TP = confusion_matrix(test_target, test_prediction)
-    #spec = TN / (TN + FP)
+    # TN, FP, FN, TP = confusion_matrix(test_target, test_prediction)
+    # spec = TN / (TN + FP)
 
     # metric fro Sens
-    #sens = TP / (TP + FN)
-    sens=recall_score(test_target,test_prediction,average='macro')
+    # sens = TP / (TP + FN)
+    sens = recall_score(test_target, test_prediction, average='macro')
     # metric for Acc
-    acc = accuracy_score(test_target,test_prediction)
+    acc = accuracy_score(test_target, test_prediction)
 
-    spec=sens*acc/(sens-acc)
+    spec = sens * acc / (sens - acc)
     # metric for R^2
     r2 = r2_score(test_target, test_prediction)
 
