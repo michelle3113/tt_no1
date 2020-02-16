@@ -10,17 +10,17 @@ def revise_parse(s: str):
 def cvt_by_mat_dot(code, key_mat):
     res = []
     idx = 0
-    while idx + 9 < len(code):
-        tmp_mat = np.mat(code[idx: idx + 9]).reshape(3, 3)
-        tar_mat = key_mat * tmp_mat
+    while idx + 3 < len(code):
+        tmp_mat = np.mat(code[idx: idx + 3]).reshape(1, 3)
+        tar_mat = tmp_mat * (key_mat ** -1)
         res.extend(tar_mat.reshape(-1).tolist()[0])
-        idx += 9
+        idx += 3
     res.extend(code[idx:])
     return res
 
 
 if __name__ == '__main__':
-    code = 'OFRNHVTNVWTZNCVCMBZZZ'
+    code = 'OFRNHVTNVWTZNCVCBMZZZ'
     key_mat = np.mat([
         [1, 2, 1],
         [3, 0, 2],
