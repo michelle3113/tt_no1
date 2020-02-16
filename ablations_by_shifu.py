@@ -8,9 +8,13 @@ from scipy.stats import pearsonr
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import mean_squared_error  # MSE
-from sklearn.metrics import r2_score  # R^2
+from sklearn.metrics import r2_score# R^2
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import recall_score
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import Imputer
 from sklearn.utils import shuffle
+
 
 warnings.filterwarnings('ignore')
 
@@ -131,16 +135,18 @@ def tiaotiao(shifu):
 
     mape = mean_absolute_percentage_error(test_target, test_prediction)
 
+
     # metric for Spec
-    TN, FP, FN, TP = confusion_matrix(test_target, test_prediction).ravel()
-    spec = TN / (TN + FP)
+    #TN, FP, FN, TP = confusion_matrix(test_target, test_prediction)
+    #spec = TN / (TN + FP)
 
     # metric fro Sens
-    sens = TP / (TP + FN)
-
+    #sens = TP / (TP + FN)
+    sens=recall_score(test_target,test_prediction,average='macro')
     # metric for Acc
-    acc = TP / (TP + FP + TN + FN)
+    acc = accuracy_score(test_target,test_prediction)
 
+    spec=sens*acc/(sens-acc)
     # metric for R^2
     r2 = r2_score(test_target, test_prediction)
 
