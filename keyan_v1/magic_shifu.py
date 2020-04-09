@@ -1,21 +1,29 @@
+import os.path as osp
 import pandas as pd
 
 
 def transform_wsw(wsw_raw: pd.DataFrame):
     wsw_raw['res'] = 0
     patient_no_list = sorted(list(set(wsw_raw['住院号'])))
-    wsw_list = sorted(list(set(wsw_raw['检验细项'])))
+    wsw_list = sorted(list(map(lambda s: s.strip(), set(wsw_raw['检验细项']))))
     wsw_data = pd.DataFrame(index=patient_no_list, columns=wsw_list)
     wsw_data.loc[:, :] = 0
     for patient_no in patient_no_list:
         tmp_df = wsw_raw[wsw_raw['住院号'] == patient_no]
         for row in tmp_df.itertuples():
-            item = row.检验细项
+            item = row.检验细项.strip()
             res = row.结果
             rule = row.参考值
+            if pd.isna(rule) or res == '另报' or res == '------':
+                continue
+            # assert isinstance(rule, str), rule
             if '～' in rule:
                 low, high = rule.split('～')
-                low, high, res = float(low), float(high), float(res)
+                low, high = float(low), float(high)
+                if isinstance(res, str) and '<' in res:
+                    res = float(res[1:])
+                else:
+                    res = float(res)
                 if low <= res <= high:  # 达标
                     wsw_data.loc[patient_no, item] = 2
                 else:  # 不达标
@@ -40,19 +48,32 @@ def transform_wsw(wsw_raw: pd.DataFrame):
     return wsw_data
 
 
-def preprocess(data_root):
-    wsw_df = pd.read_excel(f'{data_root}/有细项名称的检验病人结果_s.xlsx',
-                           sheet_name='常规结果', index=False)
-    wsw_np = transform_wsw(wsw_df)
+def preprocess(data_root, res_root):
+    res_wsw_file = osp.join(res_root, '微生物检验.xlsx')
+    res_main_file = osp.join(res_root, '病人明细.xlsx')
 
-    shifu = pd.read_excel(f'{data_root}/儿科路径病人明细_s.xlsx', index=False)
-    # shifu = shifu.iloc[:20]
+    if not osp.exists(res_wsw_file):
+        wsw_df = pd.read_excel(f'{data_root}/有细项名称的检验病人结果_s.xlsx',
+                               sheet_name='常规结果', index=False)
+        # wsw_df = wsw_df.loc[:100]
+        wsw_df = transform_wsw(wsw_df)
+        wsw_df.to_excel(res_wsw_file)
+    else:
+        wsw_df = pd.read_excel(res_wsw_file, index_col=0)
 
-    # remove duplicate column
-    unique_col = [col for col in list(shifu.columns) if not '.' in col]
-    shifu = shifu[unique_col]
+    if not osp.exists(res_main_file):
+        shifu_df = pd.read_excel(f'{data_root}/儿科路径病人明细_s.xlsx', index=False)
+        # shifu = shifu.iloc[:20]
 
-    return shifu
+        # remove duplicate column
+        unique_col = [col for col in list(shifu_df.columns) if not '.' in col]
+        shifu_df = shifu_df[unique_col]
+
+        shifu_df.to_excel(res_main_file)
+    else:
+        shifu_df = pd.read_excel(res_main_file)
+
+    return shifu_df
 
 
 def spilt_train_test(data):
@@ -69,8 +90,8 @@ def eval(pred, targ, metrics=None):
     pass
 
 
-def _main(data_root):
-    data = preprocess(data_root)
+def _main(data_root, res_root):
+    data = preprocess(data_root, res_root)
 
     train_ft, train_lbl, test_ft, test_lbl = spilt_train_test(data)
 
@@ -81,4 +102,5 @@ def _main(data_root):
 
 if __name__ == '__main__':
     data_root = '../../tt_data/zhuang/all_data'
-    _main(data_root)
+    res_root = '../../tt_res/all_res'
+    _main(data_root, res_root)
