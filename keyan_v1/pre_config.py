@@ -27,7 +27,7 @@ all_cfg = {
             'app': 'one_hot',
             'fill_nan': 0,
         },
-        'birth_weight': {
+        'brith_weight': {
             'app': 'norm',
             'fill_nan': 'mean',
         },
@@ -165,7 +165,7 @@ all_cfg = {
             'app': 'one_hot',
             'fill_nan': 1,
         },
-        'ycy_flay': {
+        'ycy_flag': {
             'app': 'one_hot',
             'fill_nan': 0,
         },
@@ -192,10 +192,10 @@ all_cfg = {
 
     },
     'after': {
-        'dis_diag_no': {
-            'app': 'order',
-            'fill_nan': 1,
-        },
+        # 'dis_diag_no': {
+        #     'app': 'order',
+        #     'fill_nan': 1,
+        # },
         'dis_diag_type': {
             'app': 'one_hot',
             'fill_nan': 2,
