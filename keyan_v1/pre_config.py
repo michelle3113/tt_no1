@@ -41,7 +41,7 @@ all_cfg = {
         },
         'tssf': {
             'app': 'one_hot',
-            'fill_nan': 0,
+            'fill_nan': '0',
         },
     },
     'middle': {
@@ -135,7 +135,7 @@ all_cfg = {
         },
         'diagnosis_date': {
             'app': 'sub',
-            'fill_nan': 0,
+            'fill_nan': 'start',
         },
         'allergy_medicine': {
             'app': 'one_hot',
@@ -171,7 +171,7 @@ all_cfg = {
         },
         'birth_date': {
             'app': 'sub',
-            'fill_nan': 0,
+            'fill_nan': 'start',
         },
         'marry_code': {
             'app': 'one_hot',
@@ -183,7 +183,7 @@ all_cfg = {
         },
         'occupation_code': {
             'app': 'one_hot',
-            'fill_nan': 7,
+            'fill_nan': '7',
         },
         'vip_code': {
             'app': 'one_hot',

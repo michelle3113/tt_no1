@@ -2,6 +2,7 @@ import os.path as osp
 import pandas as pd
 import json
 from pre_config import all_cfg
+from encoders import diags_encode, encode
 
 
 def transform_wsw(wsw_raw: pd.DataFrame):
@@ -80,13 +81,30 @@ def transform_others(main_raw):
     # remove duplicated row according to patient_admiss
     shifu_df = main_raw.drop_duplicates('patient_admiss')
     # remove useless column
-    cols = ['patient_admiss']
+    cols = ['patient_admiss', 'admiss_date', 'dis_date']
     for k, v in all_cfg.items():
         for _k, _ in v.items():
-            if _k not in ('wsw_norm'):
+            if _k not in ('wsw_norm', 'admiss_diag', 'clinic_diag',
+                          'dis_diag', 'dis_diag_type', 'dis_diag_comment'):
                 cols.append(_k)
     shifu_df = shifu_df[cols]
     shifu_df = shifu_df.set_index('patient_admiss')
+
+    # trasform date
+    shifu_df['admiss_date'] = shifu_df['admiss_date'].apply(
+        lambda s: s if s.count(':') == 2 else s[:s.rfind(':')])
+    shifu_df['dis_date'] = shifu_df['dis_date'].apply(
+        lambda s: s if s.count(':') == 2 else s[:s.rfind(':')])
+    shifu_df['birth_date'] = shifu_df['birth_date'].apply(
+        lambda s: s if (not isinstance(s, str)) or s.count(':') == 2 else s[:s.rfind(':')])
+    shifu_df['diagnosis_date'] = shifu_df['diagnosis_date'].apply(
+        lambda s: s if (not isinstance(s, str)) or s.count(':') == 2 else s[:s.rfind(':')])
+
+    shifu_df.loc[shifu_df['birth_date'].isna(), 'birth_date'] = \
+        shifu_df.loc[shifu_df['birth_date'].isna(), 'admiss_date']
+    shifu_df.loc[shifu_df['diagnosis_date'].isna(), 'diagnosis_date'] = \
+        shifu_df.loc[shifu_df['diagnosis_date'].isna(), 'admiss_date']
+
     return shifu_df
 
 
@@ -126,22 +144,56 @@ def preprocess(data_root, res_root):
             diags = json.load(fp)
         main_df = pd.read_excel(res_main_file, index_col=0)
 
+    # convert data type
+    main_df['admiss_date'] = pd.to_datetime(main_df['admiss_date'])
+    main_df['dis_date'] = pd.to_datetime(main_df['dis_date'])
+    main_df['birth_date'] = pd.to_datetime(main_df['birth_date'])
+    main_df['diagnosis_date'] = pd.to_datetime(main_df['diagnosis_date'])
+
     # encode data
     # init
     sample_id_list = main_df.index
+    pre_data = {}
+
+    # for wsw data
+    pre_wsw = pd.DataFrame(index=sample_id_list, columns=wsw_df.columns)
+    for _id in sample_id_list:
+        if _id in wsw_df.index:
+            pre_wsw.loc[_id] = wsw_df.loc[_id]
+    pre_data['wsw_norm'] = pre_wsw
+
+    # for diag data:
+    # 'admiss_diag', 'clinic_diag', 'dis_diag', 'dis_diag_type',
+    for _cur in ('admiss_diag', 'clinic_diag', 'dis_diag', 'dis_diag_type'):
+        pre_data[_cur] = diags_encode(diags, _cur)
+    # 'dis_diag_comment'
+    pre_data['dis_diag_comment'] = pd.DataFrame(index=sample_id_list, columns=['dis_diag_type'])
+    pre_data['dis_diag_comment'].loc[:] = 0
 
     # for common data
-
-    # for diag
-
-    # for wsw
-
+    # get encoder type for each attribute
+    decode_cfg = {}
+    for _k, _v in all_cfg.items():
+        for _kk, _vv in _v.items():
+            decode_cfg[_kk] = {
+                'app': _vv['app'],
+                'fill_nan': _vv['fill_nan'],
+            }
+    for _cur in main_df.columns:
+        if _cur in decode_cfg.keys():
+            pre_data[_cur] = encode(main_df, _cur, decode_cfg[_cur])
 
     # generate target
-    return wsw_df, diags, main_df
+    target = (main_df['dis_date'] - main_df['admiss_date']).apply(lambda d: d.days)
+    pre_data['target'] = pd.DataFrame(target, index=main_df.index)
+
+    return pre_data
 
 
-def spilt_train_test(data):
+def spilt_train_test(data, selected_attrs):
+    # concat and generate all table
+
+    # random spilt it
     train_ft, train_lbl, test_ft, test_lbl = [], [], [], []
     return train_ft, train_lbl, test_ft, test_lbl
 
