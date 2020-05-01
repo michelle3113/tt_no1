@@ -63,8 +63,8 @@ def transform_diag(main_raw):
         diags[sample_id] = {
             'admiss_diag': [],
             'clinic_diag': [],
-            'dis_diag_type': [],
             'dis_diag': [],
+            'dis_diag_type': [],
             'dis_diag_comment': [],
         }
         for row in tmp_df.itertuples():
@@ -246,7 +246,7 @@ def _main(data_root, res_root, train_ratio, selected_attrs, model_name, title):
 if __name__ == '__main__':
     data_root = '../../tt_data/zhuang/all_data'
     res_root = '../../tt_res/all_res'
-    stage, selected_attrs = ['middle'], []
+    stage, selected_attrs = ['before','middle'], []
     for s in stage:
         selected_attrs.extend(all_cfg[s].keys())
     model_name = 'randomforest'

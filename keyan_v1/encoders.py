@@ -24,7 +24,7 @@ def encode(df: pd.DataFrame, cur, encoder_cfg):
     # process nan
     if fill_nan == 'mean':
         mean_val = cur_df.loc[((cur_df.notna()) & (cur_df != '-'))].astype(float).mean()
-        cur_df.fillna(mean_val)
+        # cur_df.fillna(mean_val)
         cur_df.loc[cur_df == '-'] = mean_val
         cur_df = cur_df.fillna(mean_val)
     elif fill_nan == 'start':
