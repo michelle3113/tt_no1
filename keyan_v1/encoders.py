@@ -26,6 +26,7 @@ def encode(df: pd.DataFrame, cur, encoder_cfg):
         mean_val = cur_df.loc[((cur_df.notna()) & (cur_df != '-'))].astype(float).mean()
         cur_df.fillna(mean_val)
         cur_df.loc[cur_df == '-'] = mean_val
+        cur_df = cur_df.fillna(mean_val)
     elif fill_nan == 'start':
         # has done in transform
         pass
@@ -33,7 +34,7 @@ def encode(df: pd.DataFrame, cur, encoder_cfg):
         cur_df = cur_df.fillna(fill_nan)
 
     # encode
-    print(f'processing {cur}')
+    # print(f'processing {cur}')
     if encoder_type == 'raw':
         cur_df = cur_df.astype(float)
         data = cur_df

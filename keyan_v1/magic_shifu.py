@@ -1,8 +1,12 @@
 import os.path as osp
 import pandas as pd
 import json
+import numpy as np
+from random import shuffle
 from pre_config import all_cfg
 from encoders import diags_encode, encode
+from models import get_model
+from metrics import cal_metrics
 
 
 def transform_wsw(wsw_raw: pd.DataFrame):
@@ -160,6 +164,7 @@ def preprocess(data_root, res_root):
     for _id in sample_id_list:
         if _id in wsw_df.index:
             pre_wsw.loc[_id] = wsw_df.loc[_id]
+    pre_wsw = pre_wsw.fillna(0)
     pre_data['wsw_norm'] = pre_wsw
 
     # for diag data:
@@ -190,34 +195,61 @@ def preprocess(data_root, res_root):
     return pre_data
 
 
-def spilt_train_test(data, selected_attrs):
+def spilt_train_test(all_data, train_ratio, selected_attrs):
     # concat and generate all table
+    input_data = [all_data[a] for a in selected_attrs]
+    input_data = pd.concat(input_data, axis=1)
+
+    # recommend to split in three categories: 0-5 5-10 >10
+    target = all_data['target']
+    raw_lbl = pd.DataFrame(index=target.index, columns=['day'])
+    raw_lbl.loc[:] = '0-5 days'
+    raw_lbl.iloc[target < 5] = '0-5 days'
+    raw_lbl.iloc[(target >= 5) & (target < 10)] = '5-10 days'
+    raw_lbl.iloc[target >= 10] = '>=10 days'
+
+    lbl, category_name = pd.factorize(raw_lbl['day'])
 
     # random spilt it
-    train_ft, train_lbl, test_ft, test_lbl = [], [], [], []
-    return train_ft, train_lbl, test_ft, test_lbl
+    data_len = len(input_data.index)
+    train_num = int(data_len * train_ratio)
+
+    all_idx = list(range(data_len))
+    shuffle(all_idx)
+    train_idx = all_idx[:train_num]
+    test_idx = all_idx[train_num:]
+
+    train_ft, test_ft = input_data.iloc[train_idx], input_data.iloc[test_idx]
+    train_lbl, test_lbl = lbl[train_idx], lbl[test_idx]
+
+    return train_ft, train_lbl, test_ft, test_lbl, category_name
 
 
 def train_test_model(train_ft, train_lbl, test_ft, test_lbl, model_name):
-    predict, target = [], []
-    return predict, target
+    clf = get_model(model_name)
+    clf.fit(train_ft, train_lbl)
+    test_pred = clf.predict(test_ft)
+    return test_lbl, test_pred
 
 
-def eval(pred, targ, metrics=None):
-    pass
-
-
-def _main(data_root, res_root):
+def _main(data_root, res_root, train_ratio, selected_attrs, model_name, title):
     data = preprocess(data_root, res_root)
 
-    train_ft, train_lbl, test_ft, test_lbl = spilt_train_test(data)
+    train_ft, train_lbl, test_ft, test_lbl, category_name = \
+        spilt_train_test(data, train_ratio, selected_attrs)
 
-    pred, targ = train_test_model(train_ft, train_lbl, test_ft, test_lbl, 'randomforest')
+    test_lbl, test_pred = train_test_model(train_ft, train_lbl, test_ft, test_lbl, model_name)
 
-    eval(pred, targ)
+    cal_metrics(test_lbl, test_pred, category_name, title)
 
 
 if __name__ == '__main__':
     data_root = '../../tt_data/zhuang/all_data'
     res_root = '../../tt_res/all_res'
-    _main(data_root, res_root)
+    stage, selected_attrs = ['middle'], []
+    for s in stage:
+        selected_attrs.extend(all_cfg[s].keys())
+    model_name = 'randomforest'
+    # model_name = 'svm'
+    train_ratio = 0.8
+    _main(data_root, res_root, train_ratio, selected_attrs, model_name, title='/'.join(stage))
