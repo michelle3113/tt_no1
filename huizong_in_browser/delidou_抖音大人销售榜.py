@@ -167,7 +167,6 @@ if __name__ == '__main__':
         except TimeoutException:
             break
 
-
         # browser.execute_script('window.scrollBy(0,500)')
         # e = browser.find_element_by_xpath('//*[@id="content"]/div/div/div[1]/div/div/div/div[2]/div[6]/p[1]/span[2]')
         # e.click()
@@ -231,93 +230,107 @@ if __name__ == '__main__':
         except TimeoutException:
             break
 
-        # click zhibojilu  click 30 days
-        try:
-            element = WebDriverWait(browser, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="tab_menu"]/li[6]')))
-            element.click()
-        except TimeoutException:
-            break
-        browser.implicitly_wait(7)
+        # init
+        cur['观看总人数(w)'] = 0
+        cur['峰值人数(w)'] = 0
+        cur['送礼UV(w)'] = 0
+        cur['新增关注数(w)'] = 0
+        cur['新增粉丝团(w)'] = 0
+        cur['商品数'] = 0
+        cur['销售额(w)'] = 0
+        cur['销量(w)'] = 0
+        cur['音浪收入(w)'] = 0
+        cur['总佣金(w)'] = 0
 
-        try:
-            element = WebDriverWait(browser, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview_btn"]/button[2]')))
-            element.click()
-        except TimeoutException:
-            break
-        browser.implicitly_wait(7)
+        ################
+        if idx + 1 not in (19, 27, 37, 44, 46, 48, ):
+            # click zhibojilu  click 30 days
+            try:
+                element = WebDriverWait(browser, 10).until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="tab_menu"]/li[6]')))
+                element.click()
+            except TimeoutException:
+                break
+            browser.implicitly_wait(7)
 
-        try:
-            element = WebDriverWait(browser, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[1]/div[1]/p[2]')))
-            cur['观看总人数(w)'] = element.text
-        except TimeoutException:
-            break
+            try:
+                element = WebDriverWait(browser, 10).until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview_btn"]/button[2]')))
+                element.click()
+            except TimeoutException:
+                break
+            browser.implicitly_wait(7)
 
-        try:
-            element = WebDriverWait(browser, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[1]/div[2]/p[2]')))
-            cur['峰值人数(w)'] = element.text
-        except TimeoutException:
-            break
+            try:
+                element = WebDriverWait(browser, 10).until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[1]/div[1]/p[2]')))
+                cur['观看总人数(w)'] = element.text
+            except TimeoutException:
+                break
 
-        try:
-            element = WebDriverWait(browser, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[1]/div[3]/p[2]')))
-            cur['送礼UV(w)'] = element.text
-        except TimeoutException:
-            break
+            try:
+                element = WebDriverWait(browser, 10).until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[1]/div[2]/p[2]')))
+                cur['峰值人数(w)'] = element.text
+            except TimeoutException:
+                break
 
-        try:
-            element = WebDriverWait(browser, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[1]/div[4]/p[2]')))
-            cur['新增关注数(w)'] = element.text
-        except TimeoutException:
-            break
+            try:
+                element = WebDriverWait(browser, 10).until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[1]/div[3]/p[2]')))
+                cur['送礼UV(w)'] = element.text
+            except TimeoutException:
+                break
 
-        try:
-            element = WebDriverWait(browser, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[1]/div[5]/p[2]')))
-            cur['新增粉丝团(w)'] = element.text
-        except TimeoutException:
-            break
+            try:
+                element = WebDriverWait(browser, 10).until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[1]/div[4]/p[2]')))
+                cur['新增关注数(w)'] = element.text
+            except TimeoutException:
+                break
 
-        try:
-            element = WebDriverWait(browser, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[2]/div[1]/p[2]')))
-            cur['商品数'] = element.text
-        except TimeoutException:
-            break
+            try:
+                element = WebDriverWait(browser, 10).until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[1]/div[5]/p[2]')))
+                cur['新增粉丝团(w)'] = element.text
+            except TimeoutException:
+                break
 
-        try:
-            element = WebDriverWait(browser, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[2]/div[2]/p[2]')))
-            cur['销售额(w)'] = element.text
-        except TimeoutException:
-            break
+            try:
+                element = WebDriverWait(browser, 10).until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[2]/div[1]/p[2]')))
+                cur['商品数'] = element.text
+            except TimeoutException:
+                break
 
-        try:
-            element = WebDriverWait(browser, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[2]/div[3]/p[2]')))
-            cur['销量(w)'] = element.text
+            try:
+                element = WebDriverWait(browser, 10).until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[2]/div[2]/p[2]')))
+                cur['销售额(w)'] = element.text
+            except TimeoutException:
+                break
 
-        except TimeoutException:
-            break
+            try:
+                element = WebDriverWait(browser, 10).until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[2]/div[3]/p[2]')))
+                cur['销量(w)'] = element.text
 
-        try:
-            element = WebDriverWait(browser, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[2]/div[4]/p[2]')))
-            cur['音浪收入(w)'] = element.text
-        except TimeoutException:
-            break
+            except TimeoutException:
+                break
 
-        try:
-            element = WebDriverWait(browser, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[2]/div[5]/p[2]')))
-            cur['总佣金(w)'] = element.text
-        except TimeoutException:
-            break
+            try:
+                element = WebDriverWait(browser, 10).until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[2]/div[4]/p[2]')))
+                cur['音浪收入(w)'] = element.text
+            except TimeoutException:
+                break
+
+            try:
+                element = WebDriverWait(browser, 10).until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[2]/div[5]/p[2]')))
+                cur['总佣金(w)'] = element.text
+            except TimeoutException:
+                break
 
         cur = pd.DataFrame({k: [v] for k, v in cur.items()})
         if tt is None:
@@ -326,6 +339,6 @@ if __name__ == '__main__':
             tt = tt.append(cur)
         browser.close()
         browser.switch_to.window(main_handle)
-        if idx % 2 == 0:
-            tt.to_excel('shifu.xlsx', index=None)
+        # if idx % 2 == 0:
+        tt.to_excel('shifu.xlsx', index=None)
     tt.to_excel('shifu.xlsx', index=None)
