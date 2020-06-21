@@ -1,5 +1,7 @@
+import os.path as osp
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -48,15 +50,20 @@ if __name__ == '__main__':
     main_handle = browser.current_window_handle
     print(main_handle)
 
-    cols = ['排名',
-            '姓名', '性别', '地区', '分类', '达人指数',
-            '粉丝总量', '作品总数', '点赞总数', '平均点赞', '平均评论', '平均转发',
-            '粉丝增量(w)', '视频数', '新增直播数', '点赞增量(w)', '评论增量(w)', '转发增量(w)',
-            '观看总人数(w)', '峰值人数(w)', '送礼UV(w)', '新增关注数(w)', '新增粉丝团(w)',
-            '商品数', '销售额(w)', '销量(w)', '音浪收入(w)', '总佣金(w)']
-    tt = pd.DataFrame(columns=cols)
+    tt = None
+    last_time = 0
+    if osp.exists('shifu.xlsx'):
+        tt = pd.read_excel('shifu.xlsx')
+        last_time = len(tt)
+    # cols = ['排名',
+    #         '姓名', '性别', '地区', '分类', '达人指数',
+    #         '粉丝总量', '作品总数', '点赞总数', '平均点赞', '平均评论', '平均转发',
+    #         '粉丝增量(w)', '视频数', '新增直播数', '点赞增量(w)', '评论增量(w)', '转发增量(w)',
+    #         '观看总人数(w)', '峰值人数(w)', '送礼UV(w)', '新增关注数(w)', '新增粉丝团(w)',
+    #         '商品数', '销售额(w)', '销量(w)', '音浪收入(w)', '总佣金(w)']
+    # tt = pd.DataFrame(columns=cols)
     # start collection
-    for idx in range(50):
+    for idx in range(last_time, 50):
         browser.find_element_by_xpath(f'//*[@id="sku_seller_rank"]/tr[{idx + 1}]/td[2]/div/div[2]/div[1]/a').click()
         browser.switch_to.window(browser.window_handles[-1])
         browser.implicitly_wait(20)
@@ -69,9 +76,18 @@ if __name__ == '__main__':
         print(cur['姓名'])
         cur['性别'] = browser.find_element_by_xpath(
             '//*[@id="content"]/div/div/div[1]/div/div/div/div[1]/div[1]/div/div[1]/div[2]/dl/dd[2]').text.split('：')[1]
-        cur['地区'] = browser.find_element_by_xpath(
-            '//*[@id="content"]/div/div/div[1]/div/div/div/div[1]/div[1]/div/div[1]/div[2]/dl/dd[3]/span').text.split(
-            '：')[1]
+        try:
+            cur['地区'] = browser.find_element_by_xpath(
+                '//*[@id="content"]/div/div/div[1]/div/div/div/div[1]/div[1]/div/div[1]/div[2]/dl/dd[3]/span').text.split(
+                '：')[1]
+        except NoSuchElementException:
+            cur['地区'] = ''
+        # try:
+        #     element = WebDriverWait(browser, 10).until(
+        #         EC.presence_of_element_located((By.XPATH, "myDynamicElement")))
+        #
+        # except TimeoutException:
+        #     break
         cur['分类'] = browser.find_element_by_xpath(
             '//*[@id="content"]/div/div/div[1]/div/div/div/div[1]/div[1]/div/div[1]/div[2]/dl/dd[4]/span').text
 
@@ -104,6 +120,7 @@ if __name__ == '__main__':
         e.send_keys(Keys.DOWN)
         e.send_keys(Keys.DOWN)
         e.send_keys(Keys.DOWN)
+        browser.implicitly_wait(7)
         # browser.implicitly_wait(20)
 
         cur['粉丝增量(w)'] = browser.find_element_by_xpath(
@@ -125,7 +142,7 @@ if __name__ == '__main__':
         # time.sleep(2)
         # browser.find_element_by_link_text('直播记录').click()
         browser.find_element_by_xpath('//*[@id="webcastdata_overview_btn"]/button[2]').click()
-        # browser.implicitly_wait(7)
+        browser.implicitly_wait(7)
 
         cur['观看总人数(w)'] = browser.find_element_by_xpath(
             '//*[@id="webcastdata_overview"]/div[1]/div[1]/p[2]').text
@@ -155,4 +172,6 @@ if __name__ == '__main__':
             tt = tt.append(cur)
         browser.close()
         browser.switch_to.window(main_handle)
+        if idx % 2 == 0:
+            tt.to_excel('shifu.xlsx', index=None)
     tt.to_excel('shifu.xlsx', index=None)
