@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -7,6 +8,7 @@ import time
 
 if __name__ == '__main__':
     browser = webdriver.Chrome()
+    browser.set_window_size(2000, 2000)
     browser.get('https://dy.delidou.com/login')
     browser.implicitly_wait(20)
     # browser.execute_script("document.body.style.zoom='0.5'")
@@ -19,9 +21,10 @@ if __name__ == '__main__':
     browser.find_element_by_id('pw-input').send_keys('shiyan')
     # click login
     # browser.find_element_by_id('btnLogin').click()
-    browser.execute_script("document.getElementById('btnLogin').click()")
+    # browser.execute_script("document.getElementById('btnLogin').click()")
+    browser.execute_script("$('#btnLogin').click()")
     browser.implicitly_wait(7)
-    browser.execute_script("document.body.style.zoom='0.5'")
+    # browser.execute_script("document.body.style.zoom='0.5'")
     # time.sleep(2)
 
     # select
@@ -32,11 +35,15 @@ if __name__ == '__main__':
     #     EC.presence_of_element_located((By.XPATH, '//*[@id="sidebar"]/ul/li[4]/ul/li[10]/a')))
     # e.click()
     # browser.find_element_by_xpath('/html/body/nav/ul/li[4]/a/span').click()
-    # browser.find_element_by_link_text('抖音电商').click()
-    browser.execute_script("$('#sidebar > ul > li:nth-child(4) > a > span').click()")
+    e = browser.find_element_by_link_text('抖音电商')
+    e.click()
+    e.send_keys(Keys.PAGE_DOWN)
+    # browser.execute_script('document.querySelector("#sidebar > ul > li:nth-child(4)").click()')
     browser.implicitly_wait(7)
     # time.sleep(2)
     browser.find_element_by_xpath('//*[@id="sidebar"]/ul/li[4]/ul/li[10]/a').click()
+    # browser.execute_script('document.querySelector("#sidebar > ul > li.submenu.open > ul > li:nth-child(9) > a").click()')
+
     # time.sleep(2)
     main_handle = browser.current_window_handle
     print(main_handle)
@@ -49,7 +56,7 @@ if __name__ == '__main__':
             '商品数', '销售额(w)', '销量(w)', '音浪收入(w)', '总佣金(w)']
     tt = pd.DataFrame(columns=cols)
     # start collection
-    for idx in range(5):
+    for idx in range(50):
         browser.find_element_by_xpath(f'//*[@id="sku_seller_rank"]/tr[{idx + 1}]/td[2]/div/div[2]/div[1]/a').click()
         browser.switch_to.window(browser.window_handles[-1])
         browser.implicitly_wait(20)
@@ -83,8 +90,20 @@ if __name__ == '__main__':
         cur['平均转发'] = browser.find_element_by_xpath(
             '//*[@id="content"]/div/div/div[1]/div/div/div/div[2]/div[6]/p[2]').text
 
+        # browser.execute_script('window.scrollBy(0,500)')
+        # e = browser.find_element_by_xpath('//*[@id="content"]/div/div/div[1]/div/div/div/div[2]/div[6]/p[1]/span[2]')
+        # e.click()
         # click 30 days
-        browser.find_element_by_xpath('//*[@id="userdata_overview_btn"]/button[2]').click()
+        e = browser.find_element_by_xpath('//*[@id="userdata_overview_btn"]/button[2]')
+        e.click()
+        e.send_keys(Keys.DOWN)
+        e.send_keys(Keys.DOWN)
+        e.send_keys(Keys.DOWN)
+        e.send_keys(Keys.DOWN)
+        e.send_keys(Keys.DOWN)
+        e.send_keys(Keys.DOWN)
+        e.send_keys(Keys.DOWN)
+        e.send_keys(Keys.DOWN)
         # browser.implicitly_wait(20)
 
         cur['粉丝增量(w)'] = browser.find_element_by_xpath(
@@ -104,8 +123,8 @@ if __name__ == '__main__':
         browser.find_element_by_xpath('//*[@id="tab_menu"]/li[6]').click()
         browser.implicitly_wait(7)
         # time.sleep(2)
-        browser.find_element_by_link_text('直播记录').click()
-        # browser.find_element_by_xpath('//*[@id="webcastdata_overview_btn"]/button[2]').click()
+        # browser.find_element_by_link_text('直播记录').click()
+        browser.find_element_by_xpath('//*[@id="webcastdata_overview_btn"]/button[2]').click()
         # browser.implicitly_wait(7)
 
         cur['观看总人数(w)'] = browser.find_element_by_xpath(
@@ -129,7 +148,11 @@ if __name__ == '__main__':
         cur['总佣金(w)'] = browser.find_element_by_xpath(
             '//*[@id="webcastdata_overview"]/div[2]/div[5]/p[2]').text
 
-        tt.append(pd.DataFrame(cur), ignore_index=True)
+        cur = pd.DataFrame({k: [v] for k, v in cur.items()})
+        if tt is None:
+            tt = cur
+        else:
+            tt = tt.append(cur)
         browser.close()
         browser.switch_to.window(main_handle)
-    tt.to_excel('shifu.xlsx')
+    tt.to_excel('shifu.xlsx', index=None)
