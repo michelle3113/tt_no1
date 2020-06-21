@@ -59,11 +59,13 @@ if __name__ == '__main__':
     # y = np.hstack([digits.target[digits.target == i]
     #                for i in range(10)])
 
-    fts_dir = 'C:\\Users\\yifan\\Desktop\\PAMI_v3\\fts\\sun2012_gin.pkl'
+    # fts_dir = 'C:\\Users\\yifan\\Desktop\\PAMI_v3\\fts\\sun2012_gin.pkl'
+    fts_dir = 'C:\\Users\\yifan\\Downloads\\sichao_ntu_fts.pkl'
     with open(fts_dir, 'rb') as fp:
         fts = pkl.load(fp)
     X = fts['fts']
-    y = np.argmax(fts['preds'], axis=1)
+    # y = np.argmax(fts['preds'], axis=1)
+    y = fts['preds']
 
     digits_proj = TSNE(random_state=RS).fit_transform(X)
     scatter(digits_proj, y)
