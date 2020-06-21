@@ -71,46 +71,112 @@ if __name__ == '__main__':
         cur = {}
         # 基本信息
         cur['排名'] = idx + 1
-        cur['姓名'] = browser.find_element_by_xpath(
-            '//*[@id="content"]/div/div/div[1]/div/div/div/div[1]/div[1]/div/div[1]/div[2]/dl/dt').text.split('\n')[0]
-        print(cur['姓名'])
-        cur['性别'] = browser.find_element_by_xpath(
-            '//*[@id="content"]/div/div/div[1]/div/div/div/div[1]/div[1]/div/div[1]/div[2]/dl/dd[2]').text.split('：')[1]
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located(
+                    (By.XPATH, '//*[@id="content"]/div/div/div[1]/div/div/div/div[1]/div[1]/div/div[1]/div[2]/dl/dt')))
+            cur['姓名'] = element.text.split('\n')[0]
+        except TimeoutException:
+            break
+        print(cur['排名'], cur['姓名'])
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located(
+                    (By.XPATH,
+                     '//*[@id="content"]/div/div/div[1]/div/div/div/div[1]/div[1]/div/div[1]/div[2]/dl/dd[2]')))
+            cur['性别'] = element.text.split('：')[1]
+        except TimeoutException:
+            break
+
+        # try:
+        #     element = WebDriverWait(browser, 10).until(
+        #         EC.presence_of_element_located((By.XPATH, '')))
+        #
+        # except TimeoutException:
+        #     break
         try:
             cur['地区'] = browser.find_element_by_xpath(
                 '//*[@id="content"]/div/div/div[1]/div/div/div/div[1]/div[1]/div/div[1]/div[2]/dl/dd[3]/span').text.split(
                 '：')[1]
         except NoSuchElementException:
             cur['地区'] = ''
-        # try:
-        #     element = WebDriverWait(browser, 10).until(
-        #         EC.presence_of_element_located((By.XPATH, "myDynamicElement")))
-        #
-        # except TimeoutException:
-        #     break
-        cur['分类'] = browser.find_element_by_xpath(
-            '//*[@id="content"]/div/div/div[1]/div/div/div/div[1]/div[1]/div/div[1]/div[2]/dl/dd[4]/span').text
 
-        cur['达人指数'] = browser.find_element_by_xpath(
-            '//*[@id="content"]/div/div/div[1]/div/div/div/div[1]/div[2]/div[3]').text
-        cur['粉丝总量'] = browser.find_element_by_xpath(
-            '//*[@id="content"]/div/div/div[1]/div/div/div/div[2]/div[1]/p[2]').text
-        cur['作品总数'] = browser.find_element_by_xpath(
-            '//*[@id="content"]/div/div/div[1]/div/div/div/div[2]/div[2]/p[2]').text
-        cur['点赞总数'] = browser.find_element_by_xpath(
-            '//*[@id="content"]/div/div/div[1]/div/div/div/div[2]/div[3]/p[2]').text
-        cur['平均点赞'] = browser.find_element_by_xpath(
-            '//*[@id="content"]/div/div/div[1]/div/div/div/div[2]/div[4]/p[2]').text
-        cur['平均评论'] = browser.find_element_by_xpath(
-            '//*[@id="content"]/div/div/div[1]/div/div/div/div[2]/div[5]/p[2]').text
-        cur['平均转发'] = browser.find_element_by_xpath(
-            '//*[@id="content"]/div/div/div[1]/div/div/div/div[2]/div[6]/p[2]').text
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located(
+                    (By.XPATH,
+                     '//*[@id="content"]/div/div/div[1]/div/div/div/div[1]/div[1]/div/div[1]/div[2]/dl/dd[4]/span')))
+            cur['分类'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((
+                    By.XPATH, '//*[@id="content"]/div/div/div[1]/div/div/div/div[1]/div[2]/div[3]')))
+            cur['达人指数'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((
+                    By.XPATH, '//*[@id="content"]/div/div/div[1]/div/div/div/div[2]/div[1]/p[2]')))
+            cur['粉丝总量'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((
+                    By.XPATH, '//*[@id="content"]/div/div/div[1]/div/div/div/div[2]/div[2]/p[2]')))
+            cur['作品总数'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((
+                    By.XPATH, '//*[@id="content"]/div/div/div[1]/div/div/div/div[2]/div[3]/p[2]')))
+            cur['点赞总数'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((
+                    By.XPATH, '//*[@id="content"]/div/div/div[1]/div/div/div/div[2]/div[4]/p[2]')))
+            cur['平均点赞'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((
+                    By.XPATH, '//*[@id="content"]/div/div/div[1]/div/div/div/div[2]/div[5]/p[2]')))
+            cur['平均评论'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((
+                    By.XPATH, '//*[@id="content"]/div/div/div[1]/div/div/div/div[2]/div[6]/p[2]')))
+            cur['平均转发'] = element.text
+        except TimeoutException:
+            break
+
 
         # browser.execute_script('window.scrollBy(0,500)')
         # e = browser.find_element_by_xpath('//*[@id="content"]/div/div/div[1]/div/div/div/div[2]/div[6]/p[1]/span[2]')
         # e.click()
         # click 30 days
-        e = browser.find_element_by_xpath('//*[@id="userdata_overview_btn"]/button[2]')
+        try:
+            e = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="userdata_overview_btn"]/button[2]')))
+        except TimeoutException:
+            break
         e.click()
         e.send_keys(Keys.DOWN)
         e.send_keys(Keys.DOWN)
@@ -123,47 +189,135 @@ if __name__ == '__main__':
         browser.implicitly_wait(7)
         # browser.implicitly_wait(20)
 
-        cur['粉丝增量(w)'] = browser.find_element_by_xpath(
-            '//*[@id="userdata_overview"]/div/div[1]/div/span[2]/b').text
-        cur['视频数'] = browser.find_element_by_xpath(
-            '//*[@id="userdata_overview"]/div/div[2]/div/span[2]/b').text
-        cur['新增直播数'] = browser.find_element_by_xpath(
-            '//*[@id="userdata_overview"]/div/div[3]/div/span[2]/b').text
-        cur['点赞增量(w)'] = browser.find_element_by_xpath(
-            '//*[@id="userdata_overview"]/div/div[4]/div/span[2]/b').text
-        cur['评论增量(w)'] = browser.find_element_by_xpath(
-            '//*[@id="userdata_overview"]/div/div[5]/div/span[2]/b').text
-        cur['转发增量(w)'] = browser.find_element_by_xpath(
-            '//*[@id="userdata_overview"]/div/div[6]/div/span[2]/b').text
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="userdata_overview"]/div/div[1]/div/span[2]/b')))
+            cur['粉丝增量(w)'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="userdata_overview"]/div/div[2]/div/span[2]/b')))
+            cur['视频数'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="userdata_overview"]/div/div[3]/div/span[2]/b')))
+            cur['新增直播数'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="userdata_overview"]/div/div[4]/div/span[2]/b')))
+            cur['点赞增量(w)'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="userdata_overview"]/div/div[5]/div/span[2]/b')))
+            cur['评论增量(w)'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="userdata_overview"]/div/div[6]/div/span[2]/b')))
+            cur['转发增量(w)'] = element.text
+        except TimeoutException:
+            break
 
         # click zhibojilu  click 30 days
-        browser.find_element_by_xpath('//*[@id="tab_menu"]/li[6]').click()
-        browser.implicitly_wait(7)
-        # time.sleep(2)
-        # browser.find_element_by_link_text('直播记录').click()
-        browser.find_element_by_xpath('//*[@id="webcastdata_overview_btn"]/button[2]').click()
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="tab_menu"]/li[6]')))
+            element.click()
+        except TimeoutException:
+            break
         browser.implicitly_wait(7)
 
-        cur['观看总人数(w)'] = browser.find_element_by_xpath(
-            '//*[@id="webcastdata_overview"]/div[1]/div[1]/p[2]').text
-        cur['峰值人数(w)'] = browser.find_element_by_xpath(
-            '//*[@id="webcastdata_overview"]/div[1]/div[2]/p[2]').text
-        cur['送礼UV(w)'] = browser.find_element_by_xpath(
-            '//*[@id="webcastdata_overview"]/div[1]/div[3]/p[2]').text
-        cur['新增关注数(w)'] = browser.find_element_by_xpath(
-            '//*[@id="webcastdata_overview"]/div[1]/div[4]/p[2]').text
-        cur['新增粉丝团(w)'] = browser.find_element_by_xpath(
-            '//*[@id="webcastdata_overview"]/div[1]/div[5]/p[2]').text
-        cur['商品数'] = browser.find_element_by_xpath(
-            '//*[@id="webcastdata_overview"]/div[2]/div[1]/p[2]').text
-        cur['销售额(w)'] = browser.find_element_by_xpath(
-            '//*[@id="webcastdata_overview"]/div[2]/div[2]/p[2]').text
-        cur['销量(w)'] = browser.find_element_by_xpath(
-            '//*[@id="webcastdata_overview"]/div[2]/div[3]/p[2]').text
-        cur['音浪收入(w)'] = browser.find_element_by_xpath(
-            '//*[@id="webcastdata_overview"]/div[2]/div[4]/p[2]').text
-        cur['总佣金(w)'] = browser.find_element_by_xpath(
-            '//*[@id="webcastdata_overview"]/div[2]/div[5]/p[2]').text
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview_btn"]/button[2]')))
+            element.click()
+        except TimeoutException:
+            break
+        browser.implicitly_wait(7)
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[1]/div[1]/p[2]')))
+            cur['观看总人数(w)'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[1]/div[2]/p[2]')))
+            cur['峰值人数(w)'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[1]/div[3]/p[2]')))
+            cur['送礼UV(w)'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[1]/div[4]/p[2]')))
+            cur['新增关注数(w)'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[1]/div[5]/p[2]')))
+            cur['新增粉丝团(w)'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[2]/div[1]/p[2]')))
+            cur['商品数'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[2]/div[2]/p[2]')))
+            cur['销售额(w)'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[2]/div[3]/p[2]')))
+            cur['销量(w)'] = element.text
+
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[2]/div[4]/p[2]')))
+            cur['音浪收入(w)'] = element.text
+        except TimeoutException:
+            break
+
+        try:
+            element = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="webcastdata_overview"]/div[2]/div[5]/p[2]')))
+            cur['总佣金(w)'] = element.text
+        except TimeoutException:
+            break
 
         cur = pd.DataFrame({k: [v] for k, v in cur.items()})
         if tt is None:
