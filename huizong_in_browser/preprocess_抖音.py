@@ -27,10 +27,10 @@ if __name__ == '__main__':
     # preprocess others
     shifu.loc[:, pre] = shifu.loc[:, pre].apply(cvt_row)
 
-    for col in pre:
-        shifu.loc[:, col] = (shifu.loc[:, col] - shifu.loc[:, col].min())/(shifu.loc[:, col].max() - shifu.loc[:, col].min())
+    # for col in pre:
+    #     shifu.loc[:, col] = (shifu.loc[:, col] - shifu.loc[:, col].min())/(shifu.loc[:, col].max() - shifu.loc[:, col].min())
 
     category = list(set(shifu.loc[:, '分类'].tolist()))
     shifu.loc[:, '分类'] = shifu.loc[:, '分类'].apply(lambda x: category.index(x))
 
-    shifu.to_excel('pre_shifu.xlsx', index=False)
+    shifu.to_excel('2_shifu.xlsx', index=False)
