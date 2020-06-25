@@ -1,6 +1,6 @@
 clear
 capture log close
-local root "D:\fyf\tiaotiao\科研\tt_no.1\huizong_in_browser\data"
+local root "D:\code\tt_no1\huizong_in_browser\data"
 log using "`root'\\`1'.log", replace
 display "hello tiaotiao!"
 insheet using "`root'\\`1'.csv"

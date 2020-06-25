@@ -33,11 +33,11 @@ if __name__ == '__main__':
     cols_map = {c: c.replace('(w)', '') for c in cols}
     shifu.rename(columns=cols_map, inplace=True)
 
-    # for col in pre:
-    #     shifu.loc[:, col] = (shifu.loc[:, col] - shifu.loc[:, col].min())/(shifu.loc[:, col].max() - shifu.loc[:, col].min())
+    for col in set(shifu.columns) - set(not_pre):
+        shifu.loc[:, col] = (shifu.loc[:, col] - shifu.loc[:, col].min())/(shifu.loc[:, col].max() - shifu.loc[:, col].min())
 
     category = list(set(shifu.loc[:, '分类'].tolist()))
     shifu.loc[:, '分类'] = shifu.loc[:, '分类'].apply(lambda x: category.index(x))
 
-    # shifu.to_excel('data/2_shifu.xlsx', index=False)
-    shifu.to_csv('data/2_shifu.csv', index=False)
+    shifu.to_excel('data/pre_shifu.xlsx', index=False)
+    # shifu.to_csv('data/pre_shifu.csv', index=False)
