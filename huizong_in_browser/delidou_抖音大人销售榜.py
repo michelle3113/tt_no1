@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
     tt = None
     last_time = 0
-    if osp.exists('shifu.xlsx'):
+    if osp.exists('data/shifu.xlsx'):
         tt = pd.read_excel('shifu.xlsx')
         last_time = len(tt)
     # cols = ['排名',
@@ -340,5 +340,5 @@ if __name__ == '__main__':
         browser.close()
         browser.switch_to.window(main_handle)
         # if idx % 2 == 0:
-        tt.to_excel('shifu.xlsx', index=None)
-    tt.to_excel('shifu.xlsx', index=None)
+        tt.to_excel('data/shifu.xlsx', index=None)
+    tt.to_excel('data/shifu.xlsx', index=None)
